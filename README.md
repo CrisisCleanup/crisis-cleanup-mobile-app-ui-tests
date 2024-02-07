@@ -1,5 +1,12 @@
 Run UI tests and take screenshots of Crisis Cleanup mobile app across all open devices
 
+## Setup
+
+1. Install Maestro.
+1. Start emulators, simulators, devices. Be sure computer has permissions to devices and devices on and pass the lock screen.
+1. Install apps on the devices.
+1. Run tests.
+
 ## Maestro overview
 
 [Flow file structure](https://maestro.mobile.dev/api-reference/configuration/flow-configuration)
