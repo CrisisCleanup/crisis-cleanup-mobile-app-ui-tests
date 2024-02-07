@@ -1,0 +1,10 @@
+name: Auth screenshots
+appId: ${MAESTRO_APP_ID}
+tags:
+  - auth
+  - screenshots
+---
+- extendedWaitUntil:
+    visible:
+      id: rootAuthLoginText
+- takeScreenshot: ${SCREENSHOT_DIR}/AuthRoot
