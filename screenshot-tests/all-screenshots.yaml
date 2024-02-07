@@ -22,12 +22,12 @@ tags:
     id: loginForgotPasswordAction
 - runFlow: screenshot-forgot-password.yaml
 - runFlow: ../common/navigate-back-default.yaml
+- hideKeyboard
 - runFlow:
     file: ../common/navigate-back.yaml
     env:
       ANDROID_BACK_ID: loginWithDifferentMethodAction
       IOS_BACK_TEXT: Back
-- hideKeyboard
 # to Auth/phone (login)
 - tapOn:
     id: loginWithPhoneAction
