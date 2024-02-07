@@ -11,8 +11,8 @@ const targetPlatforms = ['a', 'i'].filter(
   (p) => !targetPlatform || p == targetPlatform
 )
 
-const timestampKey = new Date()
-  .toISOString()
+const timestampIso = new Date().toISOString()
+const timestampKey = timestampIso
   .replace(/-/g, '')
   .replace('T', '')
   .replace(/\.\d{3}Z$/, '')
@@ -20,7 +20,6 @@ const timestampKey = new Date()
 
 const exec = require('util').promisify(require('child_process').exec)
 const { spawn } = require('node:child_process')
-const { platform } = require('os')
 
 const getAndroidDeviceIds = async () => {
   const output = await exec('adb devices')
@@ -73,6 +72,8 @@ const takePlatformScreenshots = async (appId, deviceId, screenshotDirPath) => {
       'test',
       '-e',
       `SCREENSHOT_DIR=${screenshotDirPath}`,
+      '-e',
+      `TIMESTAMP_ISO='${timestampIso}'`,
       'screenshot-tests/all-screenshots.yaml',
     ]
     const cmd = spawn('env', cmdParts)
