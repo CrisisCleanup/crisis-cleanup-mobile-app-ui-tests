@@ -1,7 +1,5 @@
 name: Navigate back
 appId: ${MAESTRO_APP_ID}
-env:
-  ANDROID_BACK_ID: topNavBackAction
 tags:
   - navigation
 ---
@@ -16,4 +14,4 @@ tags:
       platform: iOS
     commands:
       - tapOn:
-          text: 'Back'
+          text: ${IOS_BACK_TEXT}

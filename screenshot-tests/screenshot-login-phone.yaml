@@ -1,0 +1,13 @@
+name: Phone login screenshots
+appId: ${MAESTRO_APP_ID}
+tags:
+  - auth
+  - phone
+  - screenshots
+---
+- extendedWaitUntil:
+    visible:
+      id: phoneLoginHeaderText
+- takeScreenshot: ${SCREENSHOT_DIR}/PhoneLoginKeyboard
+- hideKeyboard
+- takeScreenshot: ${SCREENSHOT_DIR}/PhoneLogin

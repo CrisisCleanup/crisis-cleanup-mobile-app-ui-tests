@@ -65,7 +65,7 @@ const mkScreenshotDir = async (platform, devicePostfix = 'phone') => {
 
 const takePlatformScreenshots = async (appId, deviceId, screenshotDirPath) => {
   return new Promise((resolve, reject) => {
-    const cmd = spawn('env', [
+    const cmdParts = [
       `MAESTRO_APP_ID=${appId}`,
       'maestro',
       '--device',
@@ -74,7 +74,8 @@ const takePlatformScreenshots = async (appId, deviceId, screenshotDirPath) => {
       '-e',
       `SCREENSHOT_DIR=${screenshotDirPath}`,
       'screenshot-tests/all-screenshots.yaml',
-    ])
+    ]
+    const cmd = spawn('env', cmdParts)
 
     cmd.stdout.on('data', (data) => {
       console.log(data.toString())
@@ -86,10 +87,9 @@ const takePlatformScreenshots = async (appId, deviceId, screenshotDirPath) => {
 
     cmd.on('close', (code) => {
       if (code) {
+        const fullCommand = cmdParts.join(' ')
         reject(
-          new Error(
-            `Screenshots for ${appId} ${deviceId} failed with code ${code}`
-          )
+          new Error(`Screenshots for "${fullCommand}" failed with code ${code}`)
         )
       } else {
         resolve()

@@ -1,0 +1,13 @@
+name: Email login screenshots
+appId: ${MAESTRO_APP_ID}
+tags:
+  - auth
+  - email
+  - screenshots
+---
+- extendedWaitUntil:
+    visible:
+      id: loginEmailHeaderText
+- takeScreenshot: ${SCREENSHOT_DIR}/EmailLoginKeyboard
+- hideKeyboard
+- takeScreenshot: ${SCREENSHOT_DIR}/EmailLogin

@@ -5,11 +5,39 @@ tags:
 ---
 - clearState
 - launchApp
+# Auth (root)
 - runFlow: screenshot-auth.yaml
+# to Auth/email (login)
 - tapOn:
-    id: "rootAuthVolunteerWithOrgAction"
+    id: loginWithEmailAction
+- runFlow: screenshot-login-email.yaml
+# to Auth/email/magic link
+- tapOn:
+    id: loginRequestMagicLinkAction
+- runFlow: screenshot-request-magic-link.yaml
+- runFlow: ../common/navigate-back-default.yaml
+# to Auth/email/forgot password
+- tapOn:
+    id: loginForgotPasswordAction
+- runFlow: screenshot-forgot-password.yaml
+- runFlow: ../common/navigate-back-default.yaml
+- runFlow:
+    file: ../common/navigate-back.yaml
+    env:
+      ANDROID_BACK_ID: loginWithDifferentMethodAction
+# to Auth/phone (login)
+- tapOn:
+    id: loginWithPhoneAction
+- runFlow: screenshot-login-phone.yaml
+- runFlow:
+    file: ../common/navigate-back.yaml
+    env:
+      ANDROID_BACK_ID: loginWithDifferentMethodAction
+# to Auth/volunteer (with org)
+- tapOn:
+    id: rootAuthVolunteerWithOrgAction
 - runFlow: screenshot-volunteer.yaml
-- runFlow: ../common/navigate-back.yaml
+- runFlow: ../common/navigate-back-default.yaml
 - extendedWaitUntil:
     visible:
       id: rootAuthLoginText

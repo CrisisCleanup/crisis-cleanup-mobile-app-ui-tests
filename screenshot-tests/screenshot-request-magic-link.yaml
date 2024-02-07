@@ -1,0 +1,12 @@
+name: Request magic link screenshots
+appId: ${MAESTRO_APP_ID}
+tags:
+  - auth
+  - magic-link
+  - screenshots
+---
+- extendedWaitUntil:
+    visible:
+      id: emailMagicLinkAction
+- waitForAnimationToEnd
+- takeScreenshot: ${SCREENSHOT_DIR}/RequestMagicLink
