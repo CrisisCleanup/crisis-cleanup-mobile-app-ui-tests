@@ -16,6 +16,7 @@ tags:
     id: loginRequestMagicLinkAction
 - runFlow: screenshot-request-magic-link.yaml
 - runFlow: ../common/navigate-back-default.yaml
+- hideKeyboard
 # to Auth/email/forgot password
 - tapOn:
     id: loginForgotPasswordAction
@@ -25,6 +26,8 @@ tags:
     file: ../common/navigate-back.yaml
     env:
       ANDROID_BACK_ID: loginWithDifferentMethodAction
+      IOS_BACK_TEXT: Back
+- hideKeyboard
 # to Auth/phone (login)
 - tapOn:
     id: loginWithPhoneAction
@@ -33,6 +36,7 @@ tags:
     file: ../common/navigate-back.yaml
     env:
       ANDROID_BACK_ID: loginWithDifferentMethodAction
+      IOS_BACK_TEXT: Back
 # to Auth/volunteer (with org)
 - tapOn:
     id: rootAuthVolunteerWithOrgAction
