@@ -1,1 +1,1 @@
-Take screenshots of Crisis Cleanup app across all open devices
+Run UI tests and take screenshots of Crisis Cleanup mobile app across all open devices
