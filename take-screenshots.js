@@ -10,11 +10,29 @@ const timestampKey = new Date()
 const exec = require('util').promisify(require('child_process').exec)
 const { spawn } = require('node:child_process')
 
-const getIosDeviceId = async () => {
+const getAndroidDeviceIds = async () => {
+  const output = await exec('adb devices')
+  const { stdout } = output
+  if (!stdout) {
+    throw new Error('Start an Android emulator/device (with apps installed)')
+  }
+  const androidDeviceIdRegex = /(\S+)\s*device\b/i
+  const matchingDeviceIds = stdout
+    .split('\n')
+    .filter((s) => androidDeviceIdRegex.test(s))
+    .map((s) => androidDeviceIdRegex.exec(s)[1])
+  if (!matchingDeviceIds.length) {
+    throw new Error(
+      'Unable to parse Android device ID. Is an Android device running?'
+    )
+  }
+  return matchingDeviceIds
+}
+const getIosDeviceIds = async () => {
   const output = await exec('xcrun simctl list devices booted')
   const { stdout } = output
   if (!stdout) {
-    throw new Error('Start an iOS simulator (with apps installed)')
+    throw new Error('Start an iOS simulator/device (with apps installed)')
   }
   const iPhoneDeviceIdRegex = /iPhone.+\(([0-9a-f-]+)\)/i
   const matchingDeviceIds = stdout
@@ -27,8 +45,8 @@ const getIosDeviceId = async () => {
   return matchingDeviceIds
 }
 
-const mkScreenshotDir = async (platform, deviceType = 'phone') => {
-  const screenshotDirPath = `screenshots/${platform}-${deviceType}-${timestampKey}`
+const mkScreenshotDir = async (platform, devicePostfix = 'phone') => {
+  const screenshotDirPath = `screenshots/${platform}-${devicePostfix}-${timestampKey}`
   fs.mkdirSync(screenshotDirPath)
   return Promise.resolve(screenshotDirPath)
 }
@@ -68,11 +86,10 @@ const takePlatformScreenshots = async (appId, deviceId, screenshotDirPath) => {
   })
 }
 
-mkScreenshotDir('android')
-  .then(async (dirPath) => {
-    // TODO Query and loop through Android devices
-    const deviceIds = ['emulator-5554']
+getAndroidDeviceIds()
+  .then(async (deviceIds) => {
     for (const deviceId of deviceIds) {
+      const dirPath = await mkScreenshotDir('android', deviceId)
       await takePlatformScreenshots(
         'com.crisiscleanup.demo.debug',
         deviceId,
@@ -80,17 +97,12 @@ mkScreenshotDir('android')
       )
     }
   })
-  .then(() => getIosDeviceId())
-  .then((iosDeviceIds) => {
-    mkScreenshotDir('ios').then(async (dirPath) => {
-      for (const deviceId of iosDeviceIds) {
-        await takePlatformScreenshots(
-          'com.crisiscleanup.dev',
-          deviceId,
-          dirPath
-        )
-      }
-    })
+  .then(() => getIosDeviceIds())
+  .then(async (iosDeviceIds) => {
+    for (const deviceId of iosDeviceIds) {
+      const dirPath = await mkScreenshotDir('ios', deviceId)
+      await takePlatformScreenshots('com.crisiscleanup.dev', deviceId, dirPath)
+    }
   })
   .then(console.log)
   .catch(console.error)
