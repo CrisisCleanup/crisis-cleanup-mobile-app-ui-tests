@@ -1,5 +1,7 @@
 name: Navigate back
 appId: ${MAESTRO_APP_ID}
+env:
+  ANDROID_BACK_ID: topNavBackAction
 tags:
   - navigation
 ---
@@ -8,10 +10,10 @@ tags:
       platform: Android
     commands:
       - tapOn:
-          id: "topNavBackAction"
+          id: ${ANDROID_BACK_ID}
 - runFlow:
     when:
       platform: iOS
     commands:
       - tapOn:
-          text: "Back"
+          text: 'Back'

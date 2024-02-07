@@ -1,4 +1,15 @@
+#!/usr/bin/env node
+
 const fs = require('fs')
+const args = require('args')
+
+args.option('platform', 'Run platform in isolation', '')
+const flags = args.parse(process.argv)
+let targetPlatform = flags.platform.toLowerCase()
+targetPlatform = targetPlatform.length ? targetPlatform[0] : ''
+const targetPlatforms = ['a', 'i'].filter(
+  (p) => !targetPlatform || p == targetPlatform
+)
 
 const timestampKey = new Date()
   .toISOString()
@@ -9,6 +20,7 @@ const timestampKey = new Date()
 
 const exec = require('util').promisify(require('child_process').exec)
 const { spawn } = require('node:child_process')
+const { platform } = require('os')
 
 const getAndroidDeviceIds = async () => {
   const output = await exec('adb devices')
@@ -46,7 +58,7 @@ const getIosDeviceIds = async () => {
 }
 
 const mkScreenshotDir = async (platform, devicePostfix = 'phone') => {
-  const screenshotDirPath = `screenshots/${platform}-${devicePostfix}-${timestampKey}`
+  const screenshotDirPath = `screenshots/${timestampKey}-${platform}-${devicePostfix}`
   fs.mkdirSync(screenshotDirPath)
   return Promise.resolve(screenshotDirPath)
 }
@@ -86,8 +98,8 @@ const takePlatformScreenshots = async (appId, deviceId, screenshotDirPath) => {
   })
 }
 
-getAndroidDeviceIds()
-  .then(async (deviceIds) => {
+const screenshotAndroid = () =>
+  getAndroidDeviceIds().then(async (deviceIds) => {
     for (const deviceId of deviceIds) {
       const dirPath = await mkScreenshotDir('android', deviceId)
       await takePlatformScreenshots(
@@ -96,13 +108,33 @@ getAndroidDeviceIds()
         dirPath
       )
     }
+
+    return `Android ${deviceIds.join(', ')}`
   })
-  .then(() => getIosDeviceIds())
-  .then(async (iosDeviceIds) => {
-    for (const deviceId of iosDeviceIds) {
+const screenshotIos = () =>
+  getIosDeviceIds().then(async (deviceIds) => {
+    for (const deviceId of deviceIds) {
       const dirPath = await mkScreenshotDir('ios', deviceId)
       await takePlatformScreenshots('com.crisiscleanup.dev', deviceId, dirPath)
     }
+    return `iOS ${deviceIds.join(', ')}`
   })
-  .then(console.log)
-  .catch(console.error)
+const screenshotPlatforms = { a: screenshotAndroid, i: screenshotIos }
+
+const runScreenshots = async () => {
+  const skipped = []
+  const performed = []
+  for (const platform of targetPlatforms) {
+    const job = screenshotPlatforms[platform]
+    if (job) {
+      const result = await job()
+      performed.push(result)
+    } else {
+      skipped.push(platform)
+    }
+  }
+
+  return { skipped, performed }
+}
+
+runScreenshots().then(console.log).catch(console.error)
