@@ -1,0 +1,31 @@
+name: Accept terms screenshots
+appId: ${MAESTRO_APP_ID}
+tags:
+  - screenshots
+  - terms-of-service
+---
+- clearState
+- launchApp
+- tapOn:
+    id: loginWithEmailAction
+- runFlow:
+    file: ../common/email-login.yaml
+    env:
+      EMAIL_ADDRESS: b@i.test
+      PASSWORD: bicleanup
+- extendedWaitUntil:
+    visible:
+      id: acceptTermsAgreeAgreementText
+- takeScreenshot: ${SCREENSHOT_DIR}/AcceptTerms
+- tapOn:
+    id: acceptTermsAcceptAction
+- takeScreenshot: ${SCREENSHOT_DIR}/AcceptTermsRequireCheckbox
+- tapOn:
+    id: acceptTermsRejectAction
+- takeScreenshot: ${SCREENSHOT_DIR}/AcceptTermsConfirmReject
+- extendedWaitUntil:
+    visible:
+      text: Cancel
+- tapOn:
+    text: Cancel
+- takeScreenshot: ${SCREENSHOT_DIR}/AcceptTermsWaited

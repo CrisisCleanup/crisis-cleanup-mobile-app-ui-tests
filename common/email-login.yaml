@@ -1,0 +1,29 @@
+name: Email address password login
+appId: ${MAESTRO_APP_ID}
+tags:
+  - authenticate
+  - email
+  - password
+---
+- extendedWaitUntil:
+    visible:
+      id: loginEmailHeaderText
+- tapOn:
+    id: loginEmailTextField
+- inputText: ${EMAIL_ADDRESS}
+- hideKeyboard
+- tapOn:
+    id: loginPasswordTextField
+- inputText: ${PASSWORD}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: emailLoginLoginAction
+- tapOn:
+    id: emailLoginLoginAction
+- runFlow:
+    when:
+      platform: iOS
+      visible: Not Now
+    commands:
+      - tapOn: Not Now

@@ -4,12 +4,14 @@ const fs = require('fs')
 const args = require('args')
 
 args.option('platform', 'Run platform in isolation', '')
+args.option('test', 'Test file name', 'all-screenshots')
 const flags = args.parse(process.argv)
 let targetPlatform = flags.platform.toLowerCase()
 targetPlatform = targetPlatform.length ? targetPlatform[0] : ''
 const targetPlatforms = ['a', 'i'].filter(
   (p) => !targetPlatform || p == targetPlatform
 )
+let testFileName = flags.test
 
 const timestampIso = new Date().toISOString()
 const timestampKey = timestampIso
@@ -74,7 +76,7 @@ const takePlatformScreenshots = async (appId, deviceId, screenshotDirPath) => {
       `SCREENSHOT_DIR=${screenshotDirPath}`,
       '-e',
       `TIMESTAMP_ISO='${timestampIso}'`,
-      'screenshot-tests/all-screenshots.yaml',
+      `screenshot-tests/${testFileName}.yaml`,
     ]
     const cmd = spawn('env', cmdParts)
 
