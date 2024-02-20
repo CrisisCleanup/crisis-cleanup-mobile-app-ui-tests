@@ -107,18 +107,19 @@ const saveStaticSite = async (platformData) => {
 
       screenshotData[key].push({
         timestamp,
-        dir: destScreenshotsDir,
+        dir: destDirName,
         files,
       })
     }
   }
 
-  // TODO Copy index.html
+  fs.copyFileSync(`${__dirname}/index.html`, `${staticSiteDir}/index.html`)
 
-  const screenshotDataContent = JSON.stringify(screenshotData)
+  const screenshotDataContent = JSON.stringify(screenshotData, null, 2)
+  const screenshotDataFileContent = `window.screenshotData = ${screenshotDataContent}`
   fs.writeFileSync(
-    `${staticSiteDir}/screenshot-data.json`,
-    screenshotDataContent
+    `${staticSiteDir}/screenshot-data.js`,
+    screenshotDataFileContent
   )
 
   return screenshotData

@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <title>Screenshot viewer</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/quasar@2.14.3/dist/quasar.prod.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+  <body>
+    <div id="q-app">
+      <p>Viewer</p>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quasar@2.14.3/dist/quasar.umd.prod.js"></script>
+    <script src="./screenshot-data.js"></script>
+    <script>
+      const screenshotData = window.screenshotData
+
+      const app = Vue.createApp({
+        setup() {
+          const allScreenshots = []
+          const uniqueFiles = new Set()
+          for (const platform in screenshotData) {
+            for (const { timestamp, dir, files } of screenshotData[platform]) {
+              for (const file of files) {
+                uniqueFiles.add(file)
+                allScreenshots.push({
+                  platform,
+                  timestamp,
+                  dir,
+                  file,
+                  filePath: `${dir}/${file}`,
+                })
+              }
+            }
+          }
+          console.log('all screenshots', allScreenshots, uniqueFiles)
+
+          return { allScreenshots }
+        },
+      })
+
+      app.use(Quasar)
+      app.mount('#q-app')
+    </script>
+  </body>
+</html>
