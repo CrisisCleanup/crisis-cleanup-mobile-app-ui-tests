@@ -17,16 +17,48 @@
       }
       .screenshots-column {
         max-width: 300px;
+        margin-right: 8px;
       }
-      .screenshot-thumbnail {
+      .screenshots-column > * {
+        margin-bottom: 8px;
+      }
+      .screenshots-column .header-bar {
+        height: 48px;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+      }
+      .screenshots-column .header-bar > * {
+        padding-right: 8px;
+      }
+      .screenshot-thumbnail.show-image {
         height: 480px;
       }
     </style>
   </head>
   <body>
     <div id="q-app">
-      <p>Viewer {{selectedSnapshots.length}}</p>
       <div class="row items-start q-pa-sm">
+        <div class="screenshots-column">
+          <p class="header-bar">&nbsp;</p>
+          <div v-for="{fileName, isSelected} in selectedFiles">
+            <div
+              class="screenshot-thumbnail flex col justify-center items-center"
+              :class="{['show-image']: (isSelected)}"
+            >
+              <div class="flex row">
+                <input
+                  type="checkbox"
+                  :id="fileName"
+                  :value="fileName"
+                  v-model="checkedFiles"
+                />
+                <label class="q-ma-none" :for="fileName">{{fileName}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
         <snapshot-screenshots
           class="screenshots-column"
           v-for="key in selectedSnapshots"
@@ -54,6 +86,7 @@
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quasar@2.14.3/dist/quasar.umd.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <script src="./screenshot-data.js"></script>
     <script>
       const screenshotData = window.screenshotData
@@ -139,11 +172,29 @@
               selectedSnapshots.splice(index, 1)
             }
           }
+
+          const checkedFiles = Vue.ref([])
+          const updateVisibleFiles = _.throttle(() => {
+            const checked = new Set(checkedFiles.value)
+            selectedFiles.forEach((data) => {
+              data.isSelected = checked.has(data.fileName)
+            })
+          }, 250)
+          Vue.watch(checkedFiles, (newValue) => {
+            updateVisibleFiles()
+          })
+          checkedFiles.value.splice(
+            0,
+            0,
+            ...orderedFiles.map(({ fileName }) => fileName)
+          )
+
           return {
             snapshotLookup,
             selectedSnapshots,
             unselectedSnapshots,
             selectedFiles,
+            checkedFiles,
             onShowSnapshots,
             onHideSnapshots,
           }
@@ -160,9 +211,8 @@
           const { h } = Vue
           const { dir, label, snapshotFiles } = this.screenshotData
 
-          // TODO Use slots. Avoid passing in callback.
-          const headerBar = h('div', { class: 'row q-gutter-sm' }, [
-            h('p', label),
+          const headerBar = h('div', { class: 'row header-bar' }, [
+            h('p', { class: 'q-ma-none' }, label),
             h(
               'button',
               {
@@ -173,20 +223,28 @@
               'X'
             ),
           ])
-
-          const images = this.selectedFiles
-            .filter(({ isSelected }) => isSelected)
-            .map(({ fileName }) => {
-              if (snapshotFiles.has(fileName)) {
-                const src = `${dir}/${fileName}`
-                return h('img', { class: 'screenshot-thumbnail', src })
+          const images = this.selectedFiles.map(({ fileName, isSelected }) => {
+            let src = ''
+            let isHidden = false
+            if (snapshotFiles.has(fileName)) {
+              if (isSelected) {
+                src = `${dir}/${fileName}`
+              } else {
+                isHidden = true
               }
-              return h('p', { class: 'screenshot-thumbnail' }, 'N/A')
-            })
+            }
+            if (src) {
+              return h('img', { class: 'screenshot-thumbnail show-image', src })
+            } else {
+              return h(
+                'p',
+                { class: 'screenshot-thumbnail q-ma-none' },
+                isHidden ? '(hidden)' : 'N/A'
+              )
+            }
+          })
 
-          return h('div', {}, [
-            h('div', { class: 'q-gutter-sm' }, [headerBar, ...images]),
-          ])
+          return h('div', [headerBar, ...images])
         },
       })
 
