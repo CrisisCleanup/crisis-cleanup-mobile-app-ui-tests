@@ -11,10 +11,45 @@
       rel="stylesheet"
       type="text/css"
     />
+    <style>
+      body {
+        background-color: #888;
+      }
+      .screenshots-column {
+        max-width: 300px;
+      }
+      .screenshot-thumbnail {
+        height: 480px;
+      }
+    </style>
   </head>
   <body>
     <div id="q-app">
-      <p>Viewer</p>
+      <p>Viewer {{selectedSnapshots.length}}</p>
+      <div class="row items-start q-pa-sm">
+        <snapshot-screenshots
+          class="screenshots-column"
+          v-for="key in selectedSnapshots"
+          :screenshot-data="snapshotLookup[key]"
+          :on-hide-snapshots="onHideSnapshots"
+          :selected-files="selectedFiles"
+        ></snapshot-screenshots>
+        <q-btn icon="add">
+          <q-menu>
+            <q-list>
+              <q-item
+                v-for="key in unselectedSnapshots"
+                clickable
+                v-close-popup
+              >
+                <q-item-section @click="onShowSnapshots(key)"
+                  >{{key}}</q-item-section
+                >
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+      </div>
     </div>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -23,27 +58,135 @@
     <script>
       const screenshotData = window.screenshotData
 
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ]
+
       const app = Vue.createApp({
         setup() {
-          const allScreenshots = []
           const uniqueFiles = new Set()
+          const snapshotLookup = {}
           for (const platform in screenshotData) {
+            const snapshotFiles = new Set()
             for (const { timestamp, dir, files } of screenshotData[platform]) {
+              const date = new Date(timestamp)
+              const shortDate = `${months[date.getMonth()]} ${date.getDate()}`
+              const longDate = `${shortDate} ${date.getFullYear()}`
+              const label = `${platform}\n${shortDate}`
+              snapshotLookup[dir] = {
+                label,
+                shortDate,
+                longDate,
+                platform,
+                dir,
+                date,
+                files,
+                snapshotFiles: new Set(files),
+              }
               for (const file of files) {
                 uniqueFiles.add(file)
-                allScreenshots.push({
-                  platform,
-                  timestamp,
-                  dir,
-                  file,
-                  filePath: `${dir}/${file}`,
-                })
               }
             }
           }
-          console.log('all screenshots', allScreenshots, uniqueFiles)
 
-          return { allScreenshots }
+          const snapshots = [
+            screenshotData.android[0].dir,
+            screenshotData.ios[0].dir,
+          ]
+          const allSnapshots = Object.keys(snapshotLookup)
+          const selectedSnapshots = Vue.reactive(snapshots)
+          const unselectedSnapshots = Vue.reactive([])
+          const updateUnselected = (selected) => {
+            const selectedSet = new Set(selected)
+            const unselected = allSnapshots.filter((s) => !selectedSet.has(s))
+            unselectedSnapshots.splice(
+              0,
+              unselectedSnapshots.length,
+              ...unselected
+            )
+          }
+          Vue.watch(selectedSnapshots, (newValue) => {
+            updateUnselected(newValue)
+          })
+
+          const orderedFiles = Array.from(uniqueFiles)
+            .sort((a, b) => a.localeCompare(b))
+            .map((fileName) => ({
+              fileName,
+              isSelected: true,
+            }))
+          const selectedFiles = Vue.reactive(orderedFiles)
+
+          updateUnselected(selectedSnapshots)
+
+          const onShowSnapshots = (snapshotId) => {
+            selectedSnapshots.push(snapshotId)
+          }
+          const onHideSnapshots = (snapshotId) => {
+            const index = selectedSnapshots.indexOf(snapshotId)
+            if (~index) {
+              selectedSnapshots.splice(index, 1)
+            }
+          }
+          return {
+            snapshotLookup,
+            selectedSnapshots,
+            unselectedSnapshots,
+            selectedFiles,
+            onShowSnapshots,
+            onHideSnapshots,
+          }
+        },
+      })
+
+      app.component('SnapshotScreenshots', {
+        props: {
+          screenshotData: Object,
+          onHideSnapshots: Function,
+          selectedFiles: Array,
+        },
+        render() {
+          const { h } = Vue
+          const { dir, label, snapshotFiles } = this.screenshotData
+
+          // TODO Use slots. Avoid passing in callback.
+          const headerBar = h('div', { class: 'row q-gutter-sm' }, [
+            h('p', label),
+            h(
+              'button',
+              {
+                onClick: () => {
+                  this.onHideSnapshots(dir)
+                },
+              },
+              'X'
+            ),
+          ])
+
+          const images = this.selectedFiles
+            .filter(({ isSelected }) => isSelected)
+            .map(({ fileName }) => {
+              if (snapshotFiles.has(fileName)) {
+                const src = `${dir}/${fileName}`
+                return h('img', { class: 'screenshot-thumbnail', src })
+              }
+              return h('p', { class: 'screenshot-thumbnail' }, 'N/A')
+            })
+
+          return h('div', {}, [
+            h('div', { class: 'q-gutter-sm' }, [headerBar, ...images]),
+          ])
         },
       })
 
