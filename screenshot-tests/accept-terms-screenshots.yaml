@@ -11,8 +11,8 @@ tags:
 - runFlow:
     file: ../common/email-login.yaml
     env:
-      EMAIL_ADDRESS: b@i.test
-      PASSWORD: bicleanup
+      EMAIL_ADDRESS: ${NEW_USER_EMAIL}
+      PASSWORD: ${NEW_USER_PASSWORD}
 - extendedWaitUntil:
     visible:
       id: acceptTermsAgreeAgreementText

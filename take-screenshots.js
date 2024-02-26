@@ -3,15 +3,70 @@
 const fs = require('fs')
 const args = require('args')
 
+/*
+ * Format of exported data should be
+ *
+ * module.exports = {
+ *   dev: devValues,
+ *   stg: npeValues,
+ *   prod: prodValues,
+ *   aus: ausValues,
+ * }
+ *
+ * where values are like
+ * {
+ *   newUserEmail: '...',
+ *   newUserPassword: '...',
+ *   normalUserEmail: '...',
+ *   normalUserPassword: '...',
+ * }
+ */
+const environmentValuesLookup = require('./environment-values')
+
 args.option('platform', 'Run platform in isolation', '')
 args.option('test', 'Test file name', 'all-screenshots')
+args.option('target-environment', 'App environment to target', 'dev')
 const flags = args.parse(process.argv)
+
 let targetPlatform = flags.platform.toLowerCase()
 targetPlatform = targetPlatform.length ? targetPlatform[0] : ''
 const targetPlatforms = ['a', 'i'].filter(
   (p) => !targetPlatform || p == targetPlatform
 )
+
 let testFileName = flags.test
+
+const targetEnvironment = flags.targetEnvironment
+const isProduction = /^prod/i.test(targetEnvironment)
+const isAus = /^aus/i.test(targetEnvironment)
+const isStaging = /^st/i.test(targetEnvironment)
+const envCode = isProduction
+  ? 'prod'
+  : isAus
+  ? 'aus'
+  : isStaging
+  ? 'stg'
+  : 'dev'
+
+const targetPlatformAppIds = {
+  android: {
+    dev: 'com.crisiscleanup.demo.debug',
+    stg: 'com.crisiscleanup.demo',
+    prod: 'com.crisiscleanup.prod',
+    aus: 'com.crisiscleanup.aussie',
+  },
+  ios: {
+    dev: 'com.crisiscleanup.dev',
+    stg: 'com.crisiscleanup.stg',
+    prod: 'com.crisiscleanup.prod',
+    aus: 'com.crisiscleanup.aus',
+  },
+}
+
+const environmentValues = environmentValuesLookup[envCode]
+if (!environmentValues) {
+  throw new Error(`Missing environment values for ${envCode}`)
+}
 
 const timestampIso = new Date().toISOString()
 const timestampKey = timestampIso
@@ -65,6 +120,10 @@ const mkScreenshotDir = async (platform, devicePostfix = 'phone') => {
 }
 
 const takePlatformScreenshots = async (appId, deviceId, screenshotDirPath) => {
+  if (!appId) {
+    throw new Error('Invalid app ID/env specified')
+  }
+
   return new Promise((resolve, reject) => {
     const cmdParts = [
       `MAESTRO_APP_ID=${appId}`,
@@ -76,9 +135,20 @@ const takePlatformScreenshots = async (appId, deviceId, screenshotDirPath) => {
       `SCREENSHOT_DIR=${screenshotDirPath}`,
       '-e',
       `TIMESTAMP_ISO='${timestampIso}'`,
-      `screenshot-tests/${testFileName}.yaml`,
     ]
-    const cmd = spawn('env', cmdParts)
+    const sensitiveParts = [
+      '-e',
+      `NEW_USER_EMAIL=${environmentValues.newUserEmail}`,
+      '-e',
+      `NEW_USER_PASSWORD=${environmentValues.newUserPassword}`,
+      '-e',
+      `REGULAR_USER_EMAIL=${environmentValues.normalUserEmail}`,
+      '-e',
+      `REGULAR_USER_PASSWORD=${environmentValues.normalUserPassword}`,
+    ]
+    const testFilePart = `screenshot-tests/${testFileName}.yaml`
+
+    const cmd = spawn('env', [...cmdParts, ...sensitiveParts, testFilePart])
 
     cmd.stdout.on('data', (data) => {
       console.log(data.toString())
@@ -90,9 +160,11 @@ const takePlatformScreenshots = async (appId, deviceId, screenshotDirPath) => {
 
     cmd.on('close', (code) => {
       if (code) {
-        const fullCommand = cmdParts.join(' ')
+        const printableCmd = [...cmdParts, testFilePart].join(' ')
         reject(
-          new Error(`Screenshots for "${fullCommand}" failed with code ${code}`)
+          new Error(
+            `Screenshots for "${printableCmd}" failed with code ${code}`
+          )
         )
       } else {
         resolve()
@@ -106,7 +178,7 @@ const screenshotAndroid = () =>
     for (const deviceId of deviceIds) {
       const dirPath = await mkScreenshotDir('android', deviceId)
       await takePlatformScreenshots(
-        'com.crisiscleanup.demo.debug',
+        targetPlatformAppIds.android[envCode],
         deviceId,
         dirPath
       )
@@ -118,7 +190,11 @@ const screenshotIos = () =>
   getIosDeviceIds().then(async (deviceIds) => {
     for (const deviceId of deviceIds) {
       const dirPath = await mkScreenshotDir('ios', deviceId)
-      await takePlatformScreenshots('com.crisiscleanup.dev', deviceId, dirPath)
+      await takePlatformScreenshots(
+        targetPlatformAppIds.ios[envCode],
+        deviceId,
+        dirPath
+      )
     }
     return `iOS ${deviceIds.join(', ')}`
   })
