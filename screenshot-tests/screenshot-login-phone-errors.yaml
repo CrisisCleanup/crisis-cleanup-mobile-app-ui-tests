@@ -1,0 +1,23 @@
+name: Phone login error screenshots
+appId: ${MAESTRO_APP_ID}
+tags:
+  - auth
+  - phone
+  - screenshots
+  - error
+---
+- extendedWaitUntil:
+    visible:
+      id: phoneLoginHeaderText
+- tapOn:
+    id: phoneLoginAction
+- takeScreenshot: ${SCREENSHOT_DIR}/PhoneLoginNoCredentials
+- tapOn:
+    id: loginPhoneTextField
+- inputRandomNumber
+# Not hiding keyboard as keyboard may not be visible (on Android)
+- tapOn:
+    id: phoneLoginAction
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: ${SCREENSHOT_DIR}/PhoneLoginInvalidCredentials

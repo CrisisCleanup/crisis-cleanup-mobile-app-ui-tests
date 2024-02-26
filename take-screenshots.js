@@ -114,7 +114,7 @@ const getIosDeviceIds = async () => {
 }
 
 const mkScreenshotDir = async (platform, devicePostfix = 'phone') => {
-  const screenshotDirPath = `screenshots/${timestampKey}-${platform}-${devicePostfix}`
+  const screenshotDirPath = `screenshots/${timestampKey}-${platform}-${envCode}-${devicePostfix}`
   fs.mkdirSync(screenshotDirPath)
   return Promise.resolve(screenshotDirPath)
 }

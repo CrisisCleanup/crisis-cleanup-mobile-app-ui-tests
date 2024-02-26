@@ -35,6 +35,9 @@
       .screenshot-thumbnail.show-image {
         height: 480px;
       }
+      .screenshot-thumbnail.center-text {
+        padding: 240px 64px;
+      }
     </style>
   </head>
   <body>
@@ -75,7 +78,7 @@
                 v-close-popup
               >
                 <q-item-section @click="onShowSnapshots(key)"
-                  >{{key}}</q-item-section
+                  >{{key}} {{snapshotLookup[key].env}}</q-item-section
                 >
               </q-item>
             </q-list>
@@ -112,16 +115,18 @@
           const snapshotLookup = {}
           for (const platform in screenshotData) {
             const snapshotFiles = new Set()
-            for (const { timestamp, dir, files } of screenshotData[platform]) {
+            for (const platformData of screenshotData[platform]) {
+              const { timestamp, env, dir, files } = platformData
               const date = new Date(timestamp)
               const shortDate = `${months[date.getMonth()]} ${date.getDate()}`
               const longDate = `${shortDate} ${date.getFullYear()}`
-              const label = `${platform}\n${shortDate}`
+              const label = `${platform} ${env}\n${shortDate}`
               snapshotLookup[dir] = {
                 label,
                 shortDate,
                 longDate,
                 platform,
+                env,
                 dir,
                 date,
                 files,
@@ -236,9 +241,13 @@
             if (src) {
               return h('img', { class: 'screenshot-thumbnail show-image', src })
             } else {
+              const showImageClass = isHidden ? '' : 'show-image'
+              const centerTextClass = isHidden ? '' : 'center-text'
               return h(
                 'p',
-                { class: 'screenshot-thumbnail q-ma-none' },
+                {
+                  class: `screenshot-thumbnail q-ma-none ${showImageClass} ${centerTextClass}`,
+                },
                 isHidden ? '(hidden)' : 'N/A'
               )
             }

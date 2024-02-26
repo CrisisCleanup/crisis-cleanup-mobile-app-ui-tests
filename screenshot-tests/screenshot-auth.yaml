@@ -7,4 +7,5 @@ tags:
 - extendedWaitUntil:
     visible:
       id: rootAuthLoginText
+- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/AuthRoot

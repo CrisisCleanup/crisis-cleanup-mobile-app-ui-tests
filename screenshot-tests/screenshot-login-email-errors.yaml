@@ -1,0 +1,48 @@
+name: Email login error screenshots
+appId: ${MAESTRO_APP_ID}
+tags:
+  - auth
+  - email
+  - screenshots
+  - error
+---
+- extendedWaitUntil:
+    visible:
+      id: loginEmailHeaderText
+
+- runFlow:
+    when:
+      notVisible:
+        id: emailLoginLoginAction
+    commands:
+      - hideKeyboard
+      - scrollUntilVisible:
+          element:
+            id: emailLoginLoginAction
+
+- tapOn:
+    id: emailLoginLoginAction
+- takeScreenshot: ${SCREENSHOT_DIR}/EmailLoginNoCredentials
+- tapOn:
+    id: loginEmailTextField
+- inputText: test
+- hideKeyboard
+- tapOn:
+    id: emailLoginLoginAction
+- takeScreenshot: ${SCREENSHOT_DIR}/EmailLoginInvalidEmail
+- tapOn:
+    id: loginEmailTextField
+- inputRandomEmail
+- hideKeyboard
+- tapOn:
+    id: emailLoginLoginAction
+- takeScreenshot: ${SCREENSHOT_DIR}/EmailLoginNoPassword
+- tapOn:
+    id: loginPasswordTextField
+- inputText: t
+- hideKeyboard
+- tapOn:
+    id: emailLoginLoginAction
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: ${SCREENSHOT_DIR}/EmailLoginInvalidCredentials

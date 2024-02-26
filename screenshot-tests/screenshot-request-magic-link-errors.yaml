@@ -1,0 +1,31 @@
+name: Request magic link error screenshots
+appId: ${MAESTRO_APP_ID}
+tags:
+  - auth
+  - magic-link
+  - screenshots
+  - error
+---
+- extendedWaitUntil:
+    visible:
+      id: emailMagicLinkAction
+- waitForAnimationToEnd
+- tapOn:
+    id: emailMagicLinkAction
+- takeScreenshot: ${SCREENSHOT_DIR}/RequestMagicLinkNoCredentials
+- tapOn:
+    id: magicLinkTextField
+- inputText: test
+- hideKeyboard
+- tapOn:
+    id: emailMagicLinkAction
+- takeScreenshot: ${SCREENSHOT_DIR}/RequestMagicLinkInvalidEmail
+- tapOn:
+    id: magicLinkTextField
+- inputRandomEmail
+- hideKeyboard
+- tapOn:
+    id: emailMagicLinkAction
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot: ${SCREENSHOT_DIR}/RequestMagicLinkInvalidCredentials

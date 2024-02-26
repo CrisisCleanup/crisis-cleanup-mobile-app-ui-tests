@@ -1,0 +1,52 @@
+name: Auth screenshots
+appId: ${MAESTRO_APP_ID}
+tags:
+  - screenshots
+  - auth
+---
+- clearState
+- launchApp
+# to Auth/email (login)
+- tapOn:
+    id: loginWithEmailAction
+# to Auth/email/magic link
+- tapOn:
+    id: loginRequestMagicLinkAction
+- runFlow: screenshot-request-magic-link-errors.yaml
+- runFlow: ../common/navigate-back-default.yaml
+- hideKeyboard
+# to Auth/email/forgot password
+- tapOn:
+    id: loginForgotPasswordAction
+- runFlow: screenshot-forgot-password-errors.yaml
+- runFlow: ../common/navigate-back-default.yaml
+
+# at Auth/email
+# Screenshot email errors after nested or navigation gets wonky
+- runFlow: screenshot-login-email-errors.yaml
+
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - scrollUntilVisible:
+          element:
+            id: loginWithDifferentMethodAction
+- runFlow:
+    file: ../common/navigate-back.yaml
+    env:
+      ANDROID_BACK_ID: loginWithDifferentMethodAction
+      IOS_BACK_TEXT: Back
+
+- runFlow:
+    file: ../common/dismiss-save-password.yaml
+
+# to Auth/phone (login)
+- tapOn:
+    id: loginWithPhoneAction
+- runFlow: screenshot-login-phone-errors.yaml
+- runFlow:
+    file: ../common/navigate-back.yaml
+    env:
+      ANDROID_BACK_ID: loginWithDifferentMethodAction
+      IOS_BACK_TEXT: Back

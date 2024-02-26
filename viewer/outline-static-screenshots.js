@@ -29,8 +29,9 @@ const validateClearDirs = async () => {
   fs.mkdirSync(staticSiteDir, { recursive: true })
 }
 
-const screenshotDirNameRegex = /^(\d{14})-(\w+)-/i
+const screenshotDirNameRegex = /^(\d{14})-(\w+)-(\w*)-/i
 const numberDateRegex = /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/
+const envCodes = new Set(['dev', 'stg', 'prod', 'aus'])
 const listLatestScreenshots = async () => {
   const screenshotDirs = fs
     .readdirSync(screenshotRootDir)
@@ -45,6 +46,8 @@ const listLatestScreenshots = async () => {
       if (match) {
         const dateName = match[1]
         const platform = match[2]
+        const env =
+          match.length > 3 && envCodes.has(match[3]) ? match[3] : 'none'
         const dateMatch = numberDateRegex.exec(dateName)
         const dateString = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}%${dateMatch[4]}:${dateMatch[5]}:${dateMatch[6]}`
         const destDirName = `${platform}-${dateName}`
@@ -52,6 +55,7 @@ const listLatestScreenshots = async () => {
           ...data,
           timestamp: new Date(dateString),
           platform,
+          env,
           destDirName,
         }
       }
@@ -97,6 +101,7 @@ const saveStaticSite = async (platformData) => {
     for (const {
       dirPath: sourceScreenshotsDir,
       timestamp,
+      env,
       files,
       destDirName,
     } of platformData[key]) {
@@ -107,6 +112,7 @@ const saveStaticSite = async (platformData) => {
 
       screenshotData[key].push({
         timestamp,
+        env,
         dir: destDirName,
         files,
       })

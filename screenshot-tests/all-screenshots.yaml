@@ -5,3 +5,4 @@ tags:
 ---
 - runFlow: accept-terms-screenshots.yaml
 - runFlow: auth-screenshots.yaml
+- runFlow: auth-error-screenshots.yaml

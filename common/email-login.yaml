@@ -22,8 +22,4 @@ tags:
 - tapOn:
     id: emailLoginLoginAction
 - runFlow:
-    when:
-      platform: iOS
-      visible: Not Now
-    commands:
-      - tapOn: Not Now
+    file: ../common/dismiss-save-password.yaml
