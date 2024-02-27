@@ -7,7 +7,7 @@ tags:
 ---
 - extendedWaitUntil:
     visible:
-      id: loginEmailHeaderText
+      id: loginPasswordTextField
 - tapOn:
     id: loginEmailTextField
 - inputText: ${EMAIL_ADDRESS}
@@ -17,6 +17,9 @@ tags:
 - inputText: ${PASSWORD}
 - hideKeyboard
 - scrollUntilVisible:
+    centerElement: true
+    # TODO How to end once element is in view for tapping? Fails on shorter Android phone.
+    timeout: 10000
     element:
       id: emailLoginLoginAction
 - tapOn:

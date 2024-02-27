@@ -20,7 +20,7 @@ Target app
 List devices
 
 - Android `adb devices`
-- iOS `xcrun simctl list devices booted`
+- iOS `xcrun simctl list devices booted` (only simulators are supported at the moment, devices will fail)
 
 Full test command
 

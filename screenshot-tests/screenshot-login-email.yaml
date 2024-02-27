@@ -7,7 +7,7 @@ tags:
 ---
 - extendedWaitUntil:
     visible:
-      id: loginEmailHeaderText
+      id: loginEmailTextField
 - takeScreenshot: ${SCREENSHOT_DIR}/EmailLoginKeyboard
 - hideKeyboard
 - takeScreenshot: ${SCREENSHOT_DIR}/EmailLogin

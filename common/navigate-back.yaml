@@ -7,8 +7,15 @@ tags:
     when:
       platform: Android
     commands:
+      - scrollUntilVisible:
+          centerElement: true
+          # TODO How to end once element is in view for tapping? Fails on shorter Android phone.
+          timeout: 15000
+          element:
+            id: ${ANDROID_BACK_ID}
       - tapOn:
           id: ${ANDROID_BACK_ID}
+
 - runFlow:
     when:
       platform: iOS

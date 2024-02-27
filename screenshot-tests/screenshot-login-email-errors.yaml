@@ -8,7 +8,7 @@ tags:
 ---
 - extendedWaitUntil:
     visible:
-      id: loginEmailHeaderText
+      id: loginEmailTextField
 
 - runFlow:
     when:

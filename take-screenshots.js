@@ -25,7 +25,8 @@ const environmentValuesLookup = require('./environment-values')
 
 args.option('platform', 'Run platform in isolation', '')
 args.option('test', 'Test file name', 'all-screenshots')
-args.option('target-environment', 'App environment to target', 'dev')
+args.option('device-id', 'Specific device to test against', '')
+args.option('env', 'App environment to target', 'dev')
 const flags = args.parse(process.argv)
 
 let targetPlatform = flags.platform.toLowerCase()
@@ -36,7 +37,9 @@ const targetPlatforms = ['a', 'i'].filter(
 
 let testFileName = flags.test
 
-const targetEnvironment = flags.targetEnvironment
+const targetDeviceId = flags.deviceId
+
+const targetEnvironment = flags.env
 const isProduction = /^prod/i.test(targetEnvironment)
 const isAus = /^aus/i.test(targetEnvironment)
 const isStaging = /^st/i.test(targetEnvironment)
@@ -79,6 +82,10 @@ const exec = require('util').promisify(require('child_process').exec)
 const { spawn } = require('node:child_process')
 
 const getAndroidDeviceIds = async () => {
+  if (targetDeviceId) {
+    return [targetDeviceId]
+  }
+
   const output = await exec('adb devices')
   const { stdout } = output
   if (!stdout) {
@@ -96,21 +103,65 @@ const getAndroidDeviceIds = async () => {
   }
   return matchingDeviceIds
 }
-const getIosDeviceIds = async () => {
+
+const getIosSimulatorIds = async () => {
   const output = await exec('xcrun simctl list devices booted')
   const { stdout } = output
   if (!stdout) {
     throw new Error('Start an iOS simulator/device (with apps installed)')
   }
   const iPhoneDeviceIdRegex = /iPhone.+\(([0-9a-f-]+)\)/i
-  const matchingDeviceIds = stdout
+  const matchingSimulatorIds = stdout
     .split('\n')
     .filter((s) => iPhoneDeviceIdRegex.test(s))
     .map((s) => iPhoneDeviceIdRegex.exec(s)[1])
-  if (!matchingDeviceIds.length) {
-    throw new Error('Unable to parse iOS device ID. Is an iOS device running?')
-  }
+  return matchingSimulatorIds
+}
+
+const getIosPhysicalDeviceIds = async () => {
+  const deviceOutput = await exec('xcrun xctrace list devices')
+  const { stdout: deviceStdout } = deviceOutput
+  const devicesSectionRegex = /^== Devices ==$/
+  const iPhoneIpadEndingDeviceId = /\b(?:iPhone|iPad)\b.+\(([0-9A-F-]+)\)$/
+  const matchingDeviceIds = deviceStdout
+    .split('\n\n')
+    .map((s) => {
+      const lines = s.split('\n')
+      if (lines.length && devicesSectionRegex.test(lines[0])) {
+        return lines
+          .slice(1)
+          .filter((l) => iPhoneIpadEndingDeviceId.test(l))
+          .map((l) => {
+            const match = iPhoneIpadEndingDeviceId.exec(l)
+            return match ? match[1] : ''
+          })
+          .filter((s) => !!s)
+      }
+      return null
+    })
+    .filter((lines) => !!lines)
+    .flat()
+
+  // TODO Physical devices are supported as of 202402.
+  //      Will fail with "Error: Device with id ... is not connected"
   return matchingDeviceIds
+}
+
+const getIosDeviceIds = async () => {
+  if (targetDeviceId) {
+    return [targetDeviceId]
+  }
+
+  const matchingSimulatorIds = await getIosSimulatorIds()
+  const matchingDeviceIds = await getIosPhysicalDeviceIds()
+  const matchingIds = [...matchingSimulatorIds, ...matchingDeviceIds]
+
+  if (!matchingIds.length) {
+    throw new Error(
+      'Unable to parse an iOS device ID. Is an iOS device running?'
+    )
+  }
+  return matchingIds
 }
 
 const mkScreenshotDir = async (platform, devicePostfix = 'phone') => {
