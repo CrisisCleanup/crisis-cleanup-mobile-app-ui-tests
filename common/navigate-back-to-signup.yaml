@@ -1,0 +1,11 @@
+name: Navigate back to signup
+appId: ${MAESTRO_APP_ID}
+tags:
+  - navigation
+  - onboarding
+---
+- runFlow:
+    file: ../common/navigate-back.yaml
+    env:
+      ANDROID_BACK_ID: topNavBackAction
+      IOS_BACK_TEXT: 'Sign Up'

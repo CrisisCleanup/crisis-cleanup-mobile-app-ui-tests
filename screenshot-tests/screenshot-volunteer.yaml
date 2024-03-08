@@ -9,3 +9,39 @@ tags:
     visible:
       id: volunteerGetStartedText
 - takeScreenshot: ${SCREENSHOT_DIR}/VolunteerWithOrg
+- tapOn:
+    id: volunteerPasteLinkAction
+- extendedWaitUntil:
+    visible:
+      id: pasteOrgInviteText
+- tapOn:
+    id: pasteOrgInviteTextField
+- hideKeyboard
+- takeScreenshot: ${SCREENSHOT_DIR}/VolunteerPasteInviteLink
+- runFlow:
+    file: ../common/navigate-back-to-signup.yaml
+- extendedWaitUntil:
+    visible:
+      id: volunteerGetStartedText
+- tapOn:
+    id: volunteerRequestAccessAction
+- extendedWaitUntil:
+    visible:
+      id: requestAccessInputInstruction
+- tapOn:
+    id: requestAccessByEmailTextField
+- hideKeyboard
+- takeScreenshot: ${SCREENSHOT_DIR}/VolunteerRequestOrgAccess
+- scrollUntilVisible:
+    element:
+      id: requestAccessSubmitAction
+- takeScreenshot: ${SCREENSHOT_DIR}/VolunteerRequestOrgAccessBottom
+- runFlow:
+    file: ../common/navigate-back-to-signup.yaml
+- tapOn:
+    id: volunteerScanQrCodeAction
+- extendedWaitUntil:
+    visible: 'Scan QR Code'
+- takeScreenshot: ${SCREENSHOT_DIR}/ScanQrCode
+- runFlow:
+    file: ../common/navigate-back-to-signup.yaml
