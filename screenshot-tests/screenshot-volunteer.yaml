@@ -1,4 +1,4 @@
-name: Onboarding screenshots
+name: Volunteer onboarding screenshots
 appId: ${MAESTRO_APP_ID}
 tags:
   - onboarding

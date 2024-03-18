@@ -1,0 +1,15 @@
+name: Request org access error screenshots
+appId: ${MAESTRO_APP_ID}
+tags:
+  - onboarding
+  - volunteer
+  - request-org-access
+  - screenshots
+  - error
+---
+- extendedWaitUntil:
+    visible:
+      id: requestAccessInputInstruction
+- tapOn:
+    id: requestAccessByEmailTextField
+- hideKeyboard

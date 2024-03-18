@@ -13,10 +13,10 @@ tags:
     env:
       EMAIL_ADDRESS: ${NEW_USER_EMAIL}
       PASSWORD: ${NEW_USER_PASSWORD}
+- waitForAnimationToEnd
 - extendedWaitUntil:
     visible:
       id: acceptTermsAgreeAgreementText
-- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/AcceptTerms
 - tapOn:
     id: acceptTermsAcceptAction

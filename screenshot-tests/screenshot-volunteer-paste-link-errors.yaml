@@ -1,0 +1,41 @@
+name: Paste invitation link error screenshots
+appId: ${MAESTRO_APP_ID}
+tags:
+  - onboarding
+  - volunteer
+  - invitation-link
+  - screenshots
+  - error
+---
+- extendedWaitUntil:
+    visible:
+      id: pasteOrgInviteText
+- tapOn:
+    id: pasteOrgInviteTextField
+- hideKeyboard
+- tapOn:
+    id: pasteOrgInviteSubmitAction
+- extendedWaitUntil:
+    visible:
+      id: pasteOrgInviteError
+- takeScreenshot: ${SCREENSHOT_DIR}/VolunteerPasteInviteLinkNoLink
+- tapOn:
+    id: pasteOrgInviteTextField
+- inputText: htt
+- tapOn:
+    id: pasteOrgInviteSubmitAction
+- extendedWaitUntil:
+    visible:
+      id: pasteOrgInviteError
+- takeScreenshot: ${SCREENSHOT_DIR}/VolunteerPasteInviteLinkMalformedLink
+- tapOn:
+    id: pasteOrgInviteTextField
+- eraseText
+- inputText: https://crisiscleanup.org/invitation_token/abcd
+- tapOn:
+    id: pasteOrgInviteSubmitAction
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: pasteOrgInviteError
+- takeScreenshot: ${SCREENSHOT_DIR}/VolunteerPasteInviteLinkInvalidLink

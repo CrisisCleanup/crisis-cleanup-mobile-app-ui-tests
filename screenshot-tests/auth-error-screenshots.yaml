@@ -1,8 +1,9 @@
-name: Auth screenshots
+name: Auth error screenshots
 appId: ${MAESTRO_APP_ID}
 tags:
   - screenshots
   - auth
+  - error
 ---
 - clearState
 - launchApp

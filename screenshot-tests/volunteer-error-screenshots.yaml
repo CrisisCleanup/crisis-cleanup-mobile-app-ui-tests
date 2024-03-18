@@ -1,0 +1,23 @@
+name: Volunteer onboarding error screenshots
+appId: ${MAESTRO_APP_ID}
+tags:
+  - onboarding
+  - volunteer
+  - screenshots
+  - error
+---
+- clearState
+- launchApp
+# to Volunteer
+- tapOn:
+    id: rootAuthVolunteerWithOrgAction
+# to Volunteer/paste (invitation) link
+- tapOn:
+    id: volunteerPasteLinkAction
+- runFlow: screenshot-volunteer-paste-link-errors.yaml
+- runFlow: ../common/navigate-back-default.yaml
+# to Volunteer/request access
+- tapOn:
+    id: volunteerRequestAccessAction
+- runFlow: screenshot-volunteer-request-access-errors.yaml
+- runFlow: ../common/navigate-back-default.yaml

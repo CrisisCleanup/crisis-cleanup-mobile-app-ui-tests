@@ -22,6 +22,10 @@ tags:
 
 - tapOn:
     id: emailLoginLoginAction
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: emailLoginError
 - takeScreenshot: ${SCREENSHOT_DIR}/EmailLoginNoCredentials
 - tapOn:
     id: loginEmailTextField
@@ -29,6 +33,10 @@ tags:
 - hideKeyboard
 - tapOn:
     id: emailLoginLoginAction
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: emailLoginError
 - takeScreenshot: ${SCREENSHOT_DIR}/EmailLoginInvalidEmail
 - tapOn:
     id: loginEmailTextField
@@ -36,6 +44,10 @@ tags:
 - hideKeyboard
 - tapOn:
     id: emailLoginLoginAction
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: emailLoginError
 - takeScreenshot: ${SCREENSHOT_DIR}/EmailLoginNoPassword
 - tapOn:
     id: loginPasswordTextField
@@ -43,6 +55,8 @@ tags:
 - hideKeyboard
 - tapOn:
     id: emailLoginLoginAction
-- waitForAnimationToEnd:
-    timeout: 5000
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: emailLoginError
 - takeScreenshot: ${SCREENSHOT_DIR}/EmailLoginInvalidCredentials
