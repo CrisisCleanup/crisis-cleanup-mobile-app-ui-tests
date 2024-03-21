@@ -6,10 +6,10 @@ tags:
   - screenshots
   - error
 ---
+- waitForAnimationToEnd
 - extendedWaitUntil:
     visible:
       id: emailMagicLinkAction
-- waitForAnimationToEnd
 - tapOn:
     id: emailMagicLinkAction
 - takeScreenshot: ${SCREENSHOT_DIR}/RequestMagicLinkNoCredentials
@@ -26,6 +26,5 @@ tags:
 - hideKeyboard
 - tapOn:
     id: emailMagicLinkAction
-- waitForAnimationToEnd:
-    timeout: 5000
+- waitForAnimationToEnd
 - takeScreenshot: ${SCREENSHOT_DIR}/RequestMagicLinkInvalidCredentials

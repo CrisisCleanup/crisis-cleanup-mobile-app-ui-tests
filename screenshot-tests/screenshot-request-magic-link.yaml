@@ -5,8 +5,11 @@ tags:
   - magic-link
   - screenshots
 ---
+- waitForAnimationToEnd
 - extendedWaitUntil:
     visible:
-      id: emailMagicLinkAction
-- waitForAnimationToEnd
+      id: magicLinkTextField
+- tapOn:
+    id: magicLinkTextField
+- hideKeyboard
 - takeScreenshot: ${SCREENSHOT_DIR}/RequestMagicLink

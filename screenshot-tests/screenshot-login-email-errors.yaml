@@ -6,19 +6,17 @@ tags:
   - screenshots
   - error
 ---
+- waitForAnimationToEnd
 - extendedWaitUntil:
     visible:
       id: loginEmailTextField
+- tapOn:
+    id: loginEmailTextField
+- hideKeyboard
 
-- runFlow:
-    when:
-      notVisible:
-        id: emailLoginLoginAction
-    commands:
-      - hideKeyboard
-      - scrollUntilVisible:
-          element:
-            id: emailLoginLoginAction
+- scrollUntilVisible:
+    element:
+      id: emailLoginLoginAction
 
 - tapOn:
     id: emailLoginLoginAction

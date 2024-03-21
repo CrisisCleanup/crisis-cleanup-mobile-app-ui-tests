@@ -10,6 +10,12 @@ tags:
 # to Auth/email (login)
 - tapOn:
     id: loginWithEmailAction
+
+- waitForAnimationToEnd
+- tapOn:
+    id: loginEmailTextField
+- hideKeyboard
+
 # to Auth/email/magic link
 - tapOn:
     id: loginRequestMagicLinkAction
