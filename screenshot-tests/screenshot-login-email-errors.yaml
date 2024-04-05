@@ -13,13 +13,7 @@ tags:
 - tapOn:
     id: loginEmailTextField
 - hideKeyboard
-
-- scrollUntilVisible:
-    element:
-      id: emailLoginLoginAction
-
-- tapOn:
-    id: emailLoginLoginAction
+- runFlow: ../common/login-email-scroll-tap-login-action.yaml
 - waitForAnimationToEnd
 - extendedWaitUntil:
     visible:
@@ -29,8 +23,7 @@ tags:
     id: loginEmailTextField
 - inputText: test
 - hideKeyboard
-- tapOn:
-    id: emailLoginLoginAction
+- runFlow: ../common/login-email-scroll-tap-login-action.yaml
 - waitForAnimationToEnd
 - extendedWaitUntil:
     visible:
@@ -40,8 +33,7 @@ tags:
     id: loginEmailTextField
 - inputRandomEmail
 - hideKeyboard
-- tapOn:
-    id: emailLoginLoginAction
+- runFlow: ../common/login-email-scroll-tap-login-action.yaml
 - waitForAnimationToEnd
 - extendedWaitUntil:
     visible:
@@ -51,8 +43,7 @@ tags:
     id: loginPasswordTextField
 - inputText: t
 - hideKeyboard
-- tapOn:
-    id: emailLoginLoginAction
+- runFlow: ../common/login-email-scroll-tap-login-action.yaml
 - waitForAnimationToEnd
 - extendedWaitUntil:
     visible:

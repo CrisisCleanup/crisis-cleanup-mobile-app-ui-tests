@@ -15,11 +15,9 @@ tags:
 - tapOn:
     id: volunteerPasteLinkAction
 - runFlow: screenshot-volunteer-paste-link-errors.yaml
-- runFlow:
-    file: ../common/navigate-back-to-signup.yaml
+- runFlow: ../common/navigate-back-to-signup.yaml
 # to Volunteer/request access
 - tapOn:
     id: volunteerRequestAccessAction
 - runFlow: screenshot-volunteer-request-access-errors.yaml
-- runFlow:
-    file: ../common/navigate-back-to-signup.yaml
+- runFlow: ../common/navigate-back-to-signup.yaml

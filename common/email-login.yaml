@@ -16,13 +16,5 @@ tags:
     id: loginPasswordTextField
 - inputText: ${PASSWORD}
 - hideKeyboard
-- scrollUntilVisible:
-    centerElement: true
-    # TODO How to end once element is in view for tapping? Fails on shorter Android phone.
-    timeout: 10000
-    element:
-      id: loginPasswordTextField
-- tapOn:
-    id: emailLoginLoginAction
-- runFlow:
-    file: ../common/dismiss-save-password.yaml
+- runFlow: ../common/login-email-scroll-tap-login-action.yaml
+- runFlow: ../common/dismiss-save-password.yaml

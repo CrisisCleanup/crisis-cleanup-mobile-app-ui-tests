@@ -1,0 +1,13 @@
+name: Scroll to login action
+appId: ${MAESTRO_APP_ID}
+tags:
+  - scroll-action
+---
+- scrollUntilVisible:
+    centerElement: true
+    # TODO How to end once element is in view for tapping? Fails on shorter Android phone.
+    timeout: 15000
+    element:
+      id: emailLoginLoginAction
+- tapOn:
+    id: emailLoginLoginAction

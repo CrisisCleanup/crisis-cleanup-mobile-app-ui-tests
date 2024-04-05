@@ -11,6 +11,9 @@ tags:
       id: phoneLoginHeaderText
 - tapOn:
     id: phoneLoginAction
+- extendedWaitUntil:
+    visible:
+      id: phoneLoginError
 - takeScreenshot: ${SCREENSHOT_DIR}/PhoneLoginNoCredentials
 - tapOn:
     id: loginPhoneTextField
@@ -18,6 +21,8 @@ tags:
 # Not hiding keyboard as keyboard may not be visible (on Android)
 - tapOn:
     id: phoneLoginAction
-- waitForAnimationToEnd:
-    timeout: 5000
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: phoneLoginError
 - takeScreenshot: ${SCREENSHOT_DIR}/PhoneLoginInvalidCredentials

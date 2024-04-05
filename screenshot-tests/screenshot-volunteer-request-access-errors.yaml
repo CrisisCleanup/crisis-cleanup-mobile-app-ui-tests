@@ -13,3 +13,9 @@ tags:
 - tapOn:
     id: requestAccessByEmailTextField
 - hideKeyboard
+- runFlow: ../common/request-access-scroll-tap-volunteer-action.yaml
+- hideKeyboard
+- extendedWaitUntil:
+    visible:
+      id: userInfoError-password
+- takeScreenshot: ${SCREENSHOT_DIR}/VolunteerRequestOrgAccessNoExistingEmailBottom

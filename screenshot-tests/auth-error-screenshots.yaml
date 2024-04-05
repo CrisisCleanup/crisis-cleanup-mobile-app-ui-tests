@@ -45,8 +45,7 @@ tags:
       ANDROID_BACK_ID: loginWithDifferentMethodAction
       IOS_BACK_TEXT: Back
 
-- runFlow:
-    file: ../common/dismiss-save-password.yaml
+- runFlow: ../common/dismiss-save-password.yaml
 
 # to Auth/phone (login)
 - tapOn:

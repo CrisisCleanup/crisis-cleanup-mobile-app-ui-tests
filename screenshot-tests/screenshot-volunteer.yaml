@@ -18,8 +18,7 @@ tags:
     id: pasteOrgInviteTextField
 - hideKeyboard
 - takeScreenshot: ${SCREENSHOT_DIR}/VolunteerPasteInviteLink
-- runFlow:
-    file: ../common/navigate-back-to-signup.yaml
+- runFlow: ../common/navigate-back-to-signup.yaml
 - extendedWaitUntil:
     visible:
       id: volunteerGetStartedText
@@ -36,12 +35,10 @@ tags:
     element:
       id: requestAccessSubmitAction
 - takeScreenshot: ${SCREENSHOT_DIR}/VolunteerRequestOrgAccessBottom
-- runFlow:
-    file: ../common/navigate-back-to-signup.yaml
+- runFlow: ../common/navigate-back-to-signup.yaml
 - tapOn:
     id: volunteerScanQrCodeAction
 - extendedWaitUntil:
     visible: 'Scan QR Code'
 - takeScreenshot: ${SCREENSHOT_DIR}/ScanQrCode
-- runFlow:
-    file: ../common/navigate-back-to-signup.yaml
+- runFlow: ../common/navigate-back-to-signup.yaml

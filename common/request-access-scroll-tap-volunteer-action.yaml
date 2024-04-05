@@ -1,0 +1,10 @@
+name: Scroll to volunteer action
+appId: ${MAESTRO_APP_ID}
+tags:
+  - scroll-action
+---
+- scrollUntilVisible:
+    element:
+      id: requestAccessSubmitAction
+- tapOn:
+    id: requestAccessSubmitAction
