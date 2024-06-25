@@ -9,6 +9,12 @@ tags:
 - extendedWaitUntil:
     visible:
       id: phoneLoginHeaderText
+
+- swipe:
+    from:
+      id: 'phoneLoginHeaderText'
+    direction: UP
+
 - tapOn:
     id: phoneLoginAction
 - extendedWaitUntil:
